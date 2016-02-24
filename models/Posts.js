@@ -4,7 +4,7 @@ var PostSchema = new mongoose.Schema({
 	title: String,
 	link: String,
 	upvotes: {type: Number, default: 0},
-	comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]
+	post: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
 });
 
 PostSchema.methods.upvote = function(cb) {
