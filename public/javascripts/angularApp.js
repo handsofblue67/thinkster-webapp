@@ -39,25 +39,31 @@ app.config([
 
 app.controller('PostsCtrl', [
     '$scope',
-    '$stateParams',
-    'posts',
+    '$posts',
+    'post',
     function($scope, posts, post){
 
         $scope.post = post;
 
         $scope.addComment = function(){
             if($scope.body === '') { return; }
-            $scope.post.comment.push({
+            posts.addComment(post._id, {
                 body: $scope.body,
                 author: 'user',
-                upvotes: 0
+            }).success(function(comment) {
+                $scope.post.comments.push(comment);
             });
             $scope.body = '';
+        };
+
+        $scope.incrementUpvotes = function(comment){
+            posts.upvoteComment(post, comment);
         };
     }
 ]);
 
 app.factory('posts', ['$http', function($http){
+
     var o = {
         posts: []
     };
@@ -69,22 +75,33 @@ app.factory('posts', ['$http', function($http){
     };
 
     o.create = function(post) {
-        return $http.post('/post', post).success(function(data){
-            o.post.push(data);
+        return $http.post('/posts', post).success(function(data){
+            o.posts.push(data);
         });
     };
 
     o.upvote = function(post) {
         return $http.put('/posts/' + post._id + '/upvote')
             .success(function(data){
-                posts.upvotes += 1;
+                post.upvotes += 1;
             });
     };
 
     o.get = function(id) {
-        return $http.get('/post/' + id).then(function(res){
+        return $http.get('/posts/' + id).then(function(res){
             return res.data;
         });
+    };
+
+    o.addComment = function(id, comment) {
+        return $http.post('/posts/' + id + '/comments', comment);
+    };
+
+    o.upvoteComment = function(post, comment) {
+        return $http.put('/posts/' + post._id + '/comments' + comment._id + '/upvote')
+            .success(function(data){
+                comment.upvotes += 1;
+            });
     };
 
     return o;
@@ -97,14 +114,6 @@ app.controller('MainCtrl', [
 
         $scope.posts = posts.posts;
 
-        //$scope.posts = [
-        //    {title: 'post 1', upvotes: 5},
-        //    {title: 'post 2', upvotes: 2},
-        //    {title: 'post 3', upvotes: 15},
-        //    {title: 'post 4', upvotes: 9},
-        //    {title: 'post 5', upvotes: 4}
-        //];
-
         $scope.addPost = function(){
             if (!$scope.title || $scope.title === '') { return; }
             posts.create({
@@ -116,8 +125,9 @@ app.controller('MainCtrl', [
         };
 
         $scope.incrementUpvotes = function(post){
-            post.upvote(post);
+            posts.upvote(post);
         };
 
     }
 ]);
+
