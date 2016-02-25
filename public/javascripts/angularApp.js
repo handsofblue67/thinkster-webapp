@@ -38,7 +38,7 @@ app.config([
 
 app.controller('PostsCtrl', [
     '$scope',
-    '$posts',
+    'posts',
     'post',
     function($scope, posts, post){
 
@@ -98,7 +98,7 @@ app.factory('posts', ['$http', function($http){
     };
 
     o.upvoteComment = function(post, comment) {
-        return $http.put('/posts/' + post._id + '/comments' + comment._id + '/upvote')
+        return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote')
             .success(function(data){
                 comment.upvotes += 1;
             });
@@ -113,15 +113,6 @@ app.controller('MainCtrl', [
     function($scope, posts){
 
         $scope.posts = posts.posts;
-
-        $scope.addComment = function() {
-            if (!$scope.body || $scope.body === '') { return; }
-            alert('adding a comment');
-            posts.addComment({
-                body: $scope.body
-            });
-            $scope.body = '';
-        };
 
         $scope.addPost = function(){
             if (!$scope.title || $scope.title === '') { return; }
