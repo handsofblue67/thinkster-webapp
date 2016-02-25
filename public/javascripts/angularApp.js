@@ -93,7 +93,6 @@ app.factory('posts', ['$http', function($http){
     };
 
     o.addComment = function(id, comment) {
-        alert("reached addComment block");
         return $http.post('/posts/' + id + '/comments', comment);
     };
 
