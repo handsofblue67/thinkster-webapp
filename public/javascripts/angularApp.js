@@ -5,7 +5,6 @@
 
 var app = angular.module('flapperNews', ['ui.router']);
 
-
 app.config([
     '$stateProvider',
     '$urlRouterProvider',
@@ -94,6 +93,7 @@ app.factory('posts', ['$http', function($http){
     };
 
     o.addComment = function(id, comment) {
+        alert("reached addComment block");
         return $http.post('/posts/' + id + '/comments', comment);
     };
 
@@ -114,6 +114,15 @@ app.controller('MainCtrl', [
 
         $scope.posts = posts.posts;
 
+        $scope.addComment = function() {
+            if (!$scope.body || $scope.body === '') { return; }
+            alert('adding a comment');
+            posts.addComment({
+                body: $scope.body
+            });
+            $scope.body = '';
+        };
+
         $scope.addPost = function(){
             if (!$scope.title || $scope.title === '') { return; }
             posts.create({
@@ -130,4 +139,3 @@ app.controller('MainCtrl', [
 
     }
 ]);
-
