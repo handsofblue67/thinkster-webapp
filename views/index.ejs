@@ -8,6 +8,7 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
     <script src="/javascripts/angularApp.js"></script>
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
+    <style> .glyphicon-thumbs-down { cursor:pointer } </style>
 </head>
 <body ng-app="flapperNews">
 
@@ -35,7 +36,12 @@
 
     <div ng-repeat="post in posts | orderBy: '-upvotes'">
         <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
+        <!--<span style="color: orangered" ng-show="post.didUpvote" class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>-->
         {{post.upvotes}}
+
+        <span class="glyphicon glyphicon-thumbs-down" ng-click="decrementUpvotes(post)"></span>
+        {{post.downvotes}}
+
         <span style="font-size:20px; margin-left:10px;">
             <a ng-show="post.link" href="{{post.link}}">
                 {{post.title}}
@@ -46,12 +52,14 @@
             </span>
         </span>
 
-        <span ng-hide="post.author">
-            - posted by {{post.author}}
+        <span>
+            <a href="#/posts/{{post._id}}">Comments </a>
+            - {{post.__v}}
         </span>
-            <a href="#/posts/{{post._id}}">Comments</a>
 
-        </span>
+        <div>
+            posted by {{post.author}}
+        </div>
     </div>
 
     <div ng-hide="isLoggedIn()">
@@ -94,7 +102,8 @@
     </div>
 
     <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
-    <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span>
+        <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span>
+        <span class="glyphicon glyphicon-thumbs-down" ng-click="decrementUpvotes(comment)"></span>
         {{comment.upvotes}} - by {{comment.author}}
     <span style="font-size:20px; margin-left:10px;">
       {{comment.body}}

@@ -53,7 +53,6 @@ router.get('/posts', function(req, res, next) {
 router.post('/posts', auth, function(req, res, next) {
     var post = new Post(req.body);
     post.author = req.payload.username;
-    console.log(post.author);
     post.save(function(err, post){
         if(err){ return next(err); }
 
@@ -70,36 +69,86 @@ router.get('/posts/:post', function(req, res) {
 });
 
 router.put('/posts/:post/upvote', auth, function(req, res, next) {
-    req.post.upvote(function(err, post){
-        if (err) {return next(err); }
+    var user = req.payload.username;
+    var revoter = req.post.voters.uppers.indexOf(user);
+    console.log(revoter);
+    if (revoter === -1) {
+        var revoter = req.post.voters.downers.indexOf(user);
+        if (revoter !== -1) {
+            console.log('changed');
+            req.post.voters.downers.splice(revoter, 1);
+            req.post.voters.uppers.push(user);
+            req.post.changeToUpvote(function (err, post) {
+                if (err) { return next(err); }
+                res.json(post);
+            });
+        } else {
+            console.log('added');
+            req.post.voters.uppers.push(user);
+            req.post.upvote(function (err, post) {
+                if (err) { return next(err); }
+                res.json(post);
+            });
+        }
+    }
+});
 
-        res.json(post);
-    });
+router.put('/posts/:post/downvote', auth, function(req, res, next) {
+    var user = req.payload.username;
+    var revoter = req.post.voters.downers.indexOf(user);
+    console.log(revoter);
+    if (revoter === -1) {
+        var revoter = req.post.voters.uppers.indexOf(user);
+        if (revoter !== -1) { // user is changing vote
+            console.log('changed');
+            req.post.voters.uppers.splice(revoter, 1);
+            req.post.voters.downers.push(user);
+            req.post.changeToDownvote(function (err, post) {
+                if (err) { return next(err); }
+                res.json(post);
+            });
+        } else {
+            console.log('added');
+            req.post.voters.downers.push(user);
+            req.post.downvote(function (err, post) {
+                if (err) { return next(err); }
+                res.json(post);
+            });
+        }
+    }
 });
 
 router.post('/posts/:post/comments', auth, function(req, res, next) {
-	var comment = new Comment(req.body);
-	comment.post = req.post;
+    var comment = new Comment(req.body);
+    comment.post = req.post;
     comment.author = req.payload.username;
 
     comment.save(function(err, comment){
-		if(err){ return next(err); }
+        if(err){ return next(err); }
 
-		req.post.comments.push(comment);
-		req.post.save(function(err, post) {
-			if(err){ return next(err); }
+        req.post.comments.push(comment);
+        req.post.save(function(err, post) {
+            if(err){ return next(err); }
 
-			res.json(comment);
-		});
-	});
+            res.json(comment);
+        });
+    });
 });
 
 router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next) {
-	req.comment.upvote(function(err, comment){
-		if (err) {return next(err); }
+    req.comment.upvote(function(err, comment){
+        if (err) {return next(err); }
 
         res.json(comment);
-	});
+    });
+});
+
+router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next) {
+    req.comment.downvote(function(err, comment){
+        if (err) {return next(err); }
+
+        res.json(comment);
+    });
 });
 
 router.post('/register', function(req, res, next){
@@ -137,3 +186,4 @@ router.post('/login', function(req, res, next){
 });
 
 module.exports = router;
+

@@ -77,7 +77,7 @@ app.controller('PostsCtrl', [
             if($scope.body === '') { return; }
             posts.addComment(post._id, {
                 body: $scope.body,
-                author: 'user'
+                //author: 'user'
             }).success(function(comment) {
                 $scope.post.comments.push(comment);
             });
@@ -86,6 +86,10 @@ app.controller('PostsCtrl', [
 
         $scope.incrementUpvotes = function(comment){
             posts.upvoteComment(post, comment);
+        };
+
+        $scope.decrementUpvotes = function(comment){
+            posts.downvoteComment(post, comment);
         };
     }
 ]);
@@ -114,8 +118,22 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
         return $http.put('/posts/' + post._id + '/upvote', null, {
             headers: {Authorization: 'Bearer '+auth.getToken()}
         }).success(function(data){
+            console.log(data);
+            //post.didDownvote = false;
+            //post.didUpvote = true;
             post.upvotes += 1;
         });
+    };
+
+    o.downvote = function(post) {
+            return $http.put('/posts/' + post._id + '/downvote', null, {
+                headers: {Authorization: 'Bearer '+auth.getToken()}
+            }).success(function(data){
+                console.log(data);
+                //post.didUpvote = false;
+                //post.didDownvote = true;
+                post.upvotes -= 1;
+            });
     };
 
     o.get = function(id) {
@@ -138,6 +156,13 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
         });
     };
 
+    o.downvoteComment = function(post, comment) {
+        return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/downvote', null, {
+            headers: {Authorization: 'Bearer '+auth.getToken()}
+        }).success(function(data){
+            comment.upvotes -= 1;
+        });
+    };
     return o;
 }]);
 
@@ -161,6 +186,10 @@ app.controller('MainCtrl', [
 
         $scope.incrementUpvotes = function(post){
             posts.upvote(post);
+        };
+
+        $scope.decrementUpvotes = function(post){
+            posts.downvote(post);
         };
     }
 ]);

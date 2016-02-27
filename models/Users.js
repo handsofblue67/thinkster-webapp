@@ -9,8 +9,19 @@ var jwt = require('jsonwebtoken');
 var UserSchema = new mongoose.Schema({
     username: {type: String, lowercase: true, unique: true},
     hash: String,
-    salt: String
+    salt: String,
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    //votedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post', vote: Number}],
+    //votedComments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', vote: Number}]
 });
+
+//UserSchema.methods.upvotePost = function(cb){
+//
+//};
+
+//UserSchema.methods.upvoteComment = function(cb){
+//
+//};
 
 UserSchema.methods.setPassword = function(password){
     this.salt = crypto.randomBytes(16).toString('hex');
