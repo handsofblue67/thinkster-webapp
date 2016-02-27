@@ -9,8 +9,8 @@ var jwt = require('jsonwebtoken');
 var UserSchema = new mongoose.Schema({
     username: {type: String, lowercase: true, unique: true},
     hash: String,
-    salt: String,
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    salt: String
+    //posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     //votedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post', vote: Number}],
     //votedComments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', vote: Number}]
 });

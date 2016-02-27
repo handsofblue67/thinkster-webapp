@@ -35,12 +35,13 @@
     </div>
 
     <div ng-repeat="post in posts | orderBy: '-upvotes'">
-        <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
-        <!--<span style="color: orangered" ng-show="post.didUpvote" class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>-->
+        <span class="glyphicon glyphicon-thumbs-up" ng-show="post.voters.uppers.indexOf(currentUser() === -1)"
+              ng-click="incrementUpvotes(post)"></span>
+        <span class="glyphicon glyphicon-thumbs-up" ng-show="post.voters.uppers.indexOf(currentUser() !== -1)"
+              style="color: orangered"></span>
         {{post.upvotes}}
 
         <span class="glyphicon glyphicon-thumbs-down" ng-click="decrementUpvotes(post)"></span>
-        {{post.downvotes}}
 
         <span style="font-size:20px; margin-left:10px;">
             <a ng-show="post.link" href="{{post.link}}">
