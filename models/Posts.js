@@ -6,7 +6,8 @@ var PostSchema = new mongoose.Schema({
     author: String,
 	upvotes: {type: Number, default: 0},
 	comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
-    voters: { uppers: [String], downers: [String]}
+    voters: { uppers: [String], downers: [String]},
+	dateAdded: Date
 });
 
 PostSchema.methods.upvote = function(cb, upper) {

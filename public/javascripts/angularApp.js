@@ -77,6 +77,7 @@ app.controller('PostsCtrl', [
             if($scope.body === '') { return; }
             posts.addComment(post._id, {
                 body: $scope.body,
+                dateAdded: new Date()
                 //author: 'user'
             }).success(function(comment) {
                 $scope.post.comments.push(comment);
