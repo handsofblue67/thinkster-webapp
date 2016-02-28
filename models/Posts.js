@@ -10,24 +10,15 @@ var PostSchema = new mongoose.Schema({
 	dateAdded: Date
 });
 
-PostSchema.methods.upvote = function(cb, upper) {
-	this.upvotes += 1;
+PostSchema.methods.upvote = function(cb) {
+    this.upvotes = this.voters.uppers.length  - this.voters.downers.length ;
 	this.save(cb);
 };
 
-PostSchema.methods.downvote = function(cb, downer) {
-	this.upvotes -= 1;
+PostSchema.methods.downvote = function(cb) {
+	this.upvotes = this.voters.uppers.length - this.voters.downers.length ;
 	this.save(cb);
 };
 
-PostSchema.methods.changeToUpvote = function(cb) {
-    this.upvotes += 2;
-    this.save(cb);
-};
-
-PostSchema.methods.changeToDownvote = function(cb) {
-    this.upvotes -= 2;
-    this.save(cb);
-};
 mongoose.model('Post', PostSchema);
 

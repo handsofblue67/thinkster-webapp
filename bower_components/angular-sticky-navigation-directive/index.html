@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Angular sticky nav demo</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+  <!-- Not required: font-awesome is used to display button icons -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <style>
+    body{
+      padding:60px 30px 0 30px;
+      color:white;
+
+      background: -webkit-linear-gradient(90deg, #606c88 10%, #3f4c6b 90%); /* Chrome 10+, Saf5.1+ */
+      background:    -moz-linear-gradient(90deg, #606c88 10%, #3f4c6b 90%); /* FF3.6+ */
+      background:     -ms-linear-gradient(90deg, #606c88 10%, #3f4c6b 90%); /* IE10 */
+      background:      -o-linear-gradient(90deg, #606c88 10%, #3f4c6b 90%); /* Opera 11.10+ */
+      background:         linear-gradient(90deg, #606c88 10%, #3f4c6b 90%); /* W3C */
+    }
+
+    h1{
+      font-size:1.6em;
+      font-weight: 300;
+      margin-bottom:30px;
+    }
+
+    p{
+      margin-bottom:80px;
+      max-width:400px;
+      color:#CED3E0;
+    }
+
+    [sticky-nav]{
+      top:0;
+      left:0;
+      position: absolute;
+      padding:10px;
+      background-color:whitesmoke;
+      width:100%;
+    }
+
+    .sticky{
+      background-color:rgba(0, 0, 0, 0.1);
+      bottom:0;
+      left:0;
+      padding:10px 15px;
+      position:fixed;
+      top:auto;
+      width:100%;
+    }
+  </style>
+</head>
+  <body class="container-fluid" ng-app="app">
+    <section sticky-nav="sticky">
+      <a class="btn btn-primary" href="https://github.com/ng-milk/angular-sticky-navigation-directive"><i class="fa fa-code-fork"></i> Fork on Github</a>
+      <a class="btn btn-default" href="https://github.com/ng-milk/angular-sticky-navigation-directive/issues"><i class="fa fa-bug"></i> Submit an issue</a>
+    </section>
+
+    <section ng-controller="ctrl" ng-repeat="a in '123456789'">
+      <h1 ng-bind="h1"></h1>
+      <p ng-bind="p"></p>
+    </section>
+
+
+    <!-- Local JS -->
+    <script src="dist/ng-sticky.js"></script>
+    <script>
+      angular
+        .module('app', ['dm.stickyNav'])
+        .controller('ctrl', ['$scope', function($scope){
+         $scope.h1 = "Angular sticky nav demo";
+         $scope.p = "Scroll down to see it in action. Conveniently drive an expanded array of sources whereas ethical expertise. Proactively target multifunctional methods of empowerment for process-centric best practices. Continually strategize process-centric human capital and user friendly vortals. Conveniently revolutionize alternative e-business via fully tested data.";
+        }]);
+    </script>
+  </body>
+</html>

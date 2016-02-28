@@ -78,7 +78,7 @@ router.put('/posts/:post/upvote', auth, function(req, res, next) {
             console.log('changed');
             req.post.voters.downers.splice(revoter, 1);
             req.post.voters.uppers.push(user);
-            req.post.changeToUpvote(function (err, post) {
+            req.post.upvote(function (err, post) {
                 if (err) { return next(err); }
                 res.json(post);
             });
@@ -103,7 +103,7 @@ router.put('/posts/:post/downvote', auth, function(req, res, next) {
             console.log('changed');
             req.post.voters.uppers.splice(revoter, 1);
             req.post.voters.downers.push(user);
-            req.post.changeToDownvote(function (err, post) {
+            req.post.downvote(function (err, post) {
                 if (err) { return next(err); }
                 res.json(post);
             });
@@ -136,19 +136,53 @@ router.post('/posts/:post/comments', auth, function(req, res, next) {
 });
 
 router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next) {
-    req.comment.upvote(function(err, comment){
-        if (err) {return next(err); }
-
-        res.json(comment);
-    });
+    var user = req.payload.username;
+    var revoter = req.comment.voters.uppers.indexOf(user);
+    console.log(revoter);
+    if (revoter === -1) {
+        var revoter = req.comment.voters.downers.indexOf(user);
+        if (revoter !== -1) { // user is changing vote
+            console.log('changed');
+            req.comment.voters.downers.splice(revoter, 1);
+            req.comment.voters.uppers.push(user);
+            req.comment.upvote(function (err, comment) {
+                if (err) { return next(err); }
+                res.json(comment);
+            });
+        } else {
+            console.log('added');
+            req.comment.voters.uppers.push(user);
+            req.comment.upvote(function (err, comment) {
+                if (err) { return next(err); }
+                res.json(comment);
+            });
+        }
+    }
 });
 
 router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next) {
-    req.comment.downvote(function(err, comment){
-        if (err) {return next(err); }
-
-        res.json(comment);
-    });
+    var user = req.payload.username;
+    var revoter = req.comment.voters.downers.indexOf(user);
+    console.log(revoter);
+    if (revoter === -1) {
+        var revoter = req.comment.voters.uppers.indexOf(user);
+        if (revoter !== -1) { // user is changing vote
+            console.log('changed');
+            req.comment.voters.uppers.splice(revoter, 1);
+            req.comment.voters.downers.push(user);
+            req.comment.downvote(function (err, comment) {
+                if (err) { return next(err); }
+                res.json(comment);
+            });
+        } else {
+            console.log('added');
+            req.comment.voters.downers.push(user);
+            req.comment.downvote(function (err, comment) {
+                if (err) { return next(err); }
+                res.json(comment);
+            });
+        }
+    }
 });
 
 router.post('/register', function(req, res, next){

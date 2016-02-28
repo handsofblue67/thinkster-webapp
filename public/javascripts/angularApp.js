@@ -2,7 +2,7 @@
  * Created by michael on 2/22/16.
  */
 
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('flapperNews', ['ui.router', 'ng-mfb', 'dm.stickyNav']);
 
 app.config([
     '$stateProvider',
@@ -72,6 +72,7 @@ app.controller('PostsCtrl', [
     function($scope, posts, post, auth){
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.post = post;
+        $scope.currentUser = auth.currentUser;
 
         $scope.addComment = function(){
             if($scope.body === '') { return; }
@@ -119,10 +120,11 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
         return $http.put('/posts/' + post._id + '/upvote', null, {
             headers: {Authorization: 'Bearer '+auth.getToken()}
         }).success(function(data){
-            console.log(data);
-            //post.didDownvote = false;
-            //post.didUpvote = true;
+            post.upvotes = post.voters.uppers.length - post.voters.downers.length;
             post.upvotes += 1;
+            post.didUpvote = false;
+            post.didDownvote = true;
+            console.log(post);
         });
     };
 
@@ -130,10 +132,10 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
             return $http.put('/posts/' + post._id + '/downvote', null, {
                 headers: {Authorization: 'Bearer '+auth.getToken()}
             }).success(function(data){
-                console.log(data);
-                //post.didUpvote = false;
-                //post.didDownvote = true;
                 post.upvotes -= 1;
+                post.didUpvote = true;
+                post.didDownvote = false;
+                console.log(post);
             });
     };
 
@@ -174,12 +176,14 @@ app.controller('MainCtrl', [
     function($scope, posts, auth){
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.posts = posts.posts;
+        $scope.currentUser = auth.currentUser;
 
         $scope.addPost = function(){
             if (!$scope.title || $scope.title === '') { return; }
             posts.create({
                 title: $scope.title,
-                link: $scope.link
+                link: $scope.link,
+                dateAdded: new Date()
             });
             $scope.title = '';
             $scope.link = '';
@@ -192,6 +196,7 @@ app.controller('MainCtrl', [
         $scope.decrementUpvotes = function(post){
             posts.downvote(post);
         };
+
     }
 ]);
 
